@@ -37,6 +37,7 @@ global theScreenScaling = 0
 global theScreenScalingTest = 100 ;this test value increases by 25 every 'failed' test
 global lastSavedMatchText = ""
 ;MsgBox %A_ScreenWidth% ;DEBUG
+global fieldControlNameIs = "Field Control"
 
 ;Menu, TRAY, Icon, favicon.ico ;icon is set via AHK2EXE
 Menu, TRAY, nostandard
@@ -63,7 +64,7 @@ thisY := oAccLoc.y
 ;MsgBox %thisX% %thisY% ;DEBUG
 matchQueueDifference := (Qual2Loc.y - Qual1Loc.y) / 2 ;this is 16 / 2 = 8 on a 1920x1200 screen
 
-ControlGetText, EDRorIQ, Button5, Field Control
+ControlGetText, EDRorIQ, Button5, %fieldControlNameIs%
 if(EDRorIQ == "Red") {
 	matchTimeDelay = 110000 ;Autonomous Winner below None = Red for EDR
 }
@@ -71,7 +72,18 @@ else if(EDRorIQ == "Team 1") {
 	matchTimeDelay = 65000 ;Autonomous Winner below None = Team 1 for IQ
 }
 else {
-	ToolTip matchTimeDelay is unknown, EDR by default
+	InputBox, fieldControlNameIs, % "Is your Field Control named differently? Please input it (Field Sets > first entry)"
+}
+ControlGetText, EDRorIQ, Button6, %fieldControlNameIs%
+if(EDRorIQ == "Red") {
+	matchTimeDelay = 110000 ;Autonomous Winner below None = Red for EDR
+}
+else if(EDRorIQ == "Team 1") {
+	matchTimeDelay = 65000 ;Autonomous Winner below None = Team 1 for IQ
+}
+else {
+	ToolTip matchTimeDelay is unknown`, EDR by default
+	InputBox, theScreenScaling, % "matchTimeDelay unknown? 110000 is default"
 	matchTimeDelay = 110000 ;2017 IQ has no auton winner buttons - they are invisible. still is found as "Team 1"
 }
 
@@ -100,85 +112,85 @@ Loop {
 	3Joy3:: ;we use JoyX, 2JoyX and 3JoyX in case the connected joystick registers as the 2nd or 3rd device
 	2Joy3:: ;intro
 	Joy3::
-		ControlGetText, MatchMode, Static4, Field Control
+		ControlGetText, MatchMode, Static4, %fieldControlNameIs%
 		if(MatchMode != "")
 		{
 			return ;MatchMode wasn't blank - we're in Auton, between Auton and Driver, or in Driver. Bail.
 		}
-		WinActivate, Field Control
+		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		WinActivate, Field Control
+		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		ControlClick, Button21, Field Control,,,,NA
-		ControlClick, Button21, Field Control,,,,NA
-		ControlClick, Button21, Field Control,,,,NA
+		ControlClick, Button21, %fieldControlNameIs%,,,,NA
+		ControlClick, Button21, %fieldControlNameIs%,,,,NA
+		ControlClick, Button21, %fieldControlNameIs%,,,,NA
 		Sleep, sleepDelay
 	return
 	3Joy5::
 	2Joy5:: ;auton none
 	Joy5::
-		WinActivate, Field Control
+		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		WinActivate, Field Control
+		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		ControlClick, Button4, Field Control,,,,NA
-		ControlClick, Button4, Field Control,,,,NA
-		ControlClick, Button4, Field Control,,,,NA
+		ControlClick, Button4, %fieldControlNameIs%,,,,NA
+		ControlClick, Button4, %fieldControlNameIs%,,,,NA
+		ControlClick, Button4, %fieldControlNameIs%,,,,NA
 		Sleep, sleepDelay
 	return
 	3Joy6::
 	2Joy6:: ;auton red
 	Joy6::
-		WinActivate, Field Control
+		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		WinActivate, Field Control
+		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		ControlClick, Button5, Field Control,,,,NA
-		ControlClick, Button5, Field Control,,,,NA
-		ControlClick, Button5, Field Control,,,,NA
+		ControlClick, Button5, %fieldControlNameIs%,,,,NA
+		ControlClick, Button5, %fieldControlNameIs%,,,,NA
+		ControlClick, Button5, %fieldControlNameIs%,,,,NA
 		Sleep, sleepDelay
 	return
 	3Joy7::
 	2Joy7:: ;auton blue
 	Joy7::
-		WinActivate, Field Control
+		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		WinActivate, Field Control
+		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		ControlClick, Button6, Field Control,,,,NA
-		ControlClick, Button6, Field Control,,,,NA
-		ControlClick, Button6, Field Control,,,,NA
+		ControlClick, Button6, %fieldControlNameIs%,,,,NA
+		ControlClick, Button6, %fieldControlNameIs%,,,,NA
+		ControlClick, Button6, %fieldControlNameIs%,,,,NA
 		Sleep, sleepDelay
 	return
 	3Joy1::
 	2Joy1:: ;saved results
 	Joy1::
-		ControlGetText, MatchMode, Static4, Field Control
+		ControlGetText, MatchMode, Static4, %fieldControlNameIs%
 		if(MatchMode != "")
 		{
 			return
 		}
-		WinActivate, Field Control
+		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		WinActivate, Field Control
+		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		ControlClick, Button23, Field Control,,,,NA
-		ControlClick, Button23, Field Control,,,,NA
-		ControlClick, Button23, Field Control,,,,NA
+		ControlClick, Button23, %fieldControlNameIs%,,,,NA
+		ControlClick, Button23, %fieldControlNameIs%,,,,NA
+		ControlClick, Button23, %fieldControlNameIs%,,,,NA
 		Sleep, sleepDelay
 	return
 	3Joy2::
 	2Joy2:: ;start match
 	Joy2::
-		ControlGetText, MatchMode, Static4, Field Control
+		ControlGetText, MatchMode, Static4, %fieldControlNameIs%
 		if(MatchMode == "AUTONOMOUS" || MatchMode == "DRIVER CONTROL") {
 			return ;bail, we're still in a match mode
 		}
-		WinActivate, Field Control
+		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		WinActivate, Field Control
+		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay*3
-		ControlClick, Button11, Field Control,,,,NA
+		ControlClick, Button11, %fieldControlNameIs%,,,,NA
 		Sleep, sleepDelay
 		if(MatchMode == "PAUSED" || MatchMode == "DRIVER CONTROL") ;check the text under Match Timer for Paused or Driver Control
 		{
@@ -228,14 +240,14 @@ SetDebugActive:
 return
 
 BackToIntro:
-	ControlGetText, MatchMode, Static4, Field Control
+	ControlGetText, MatchMode, Static4, %fieldControlNameIs%
 	if(MatchMode != "")
 	{
 		return
 	}
-	ControlClick, Button21, Field Control,,,,NA ;intro
-	ControlClick, Button21, Field Control,,,,NA
-	ControlClick, Button21, Field Control,,,,NA
+	ControlClick, Button21, %fieldControlNameIs%,,,,NA ;intro
+	ControlClick, Button21, %fieldControlNameIs%,,,,NA
+	ControlClick, Button21, %fieldControlNameIs%,,,,NA
 	SetTimer, BackToIntro, Off
 return
 
@@ -312,7 +324,7 @@ CheckQueue:
 return
 
 QueueMatch() {
-	ControlGetText, MatchMode, Static4, Field Control ;IQ=4, EDR=4, changed in a previous ver?
+	ControlGetText, MatchMode, Static4, %fieldControlNameIs% ;IQ=4, EDR=4, changed in a previous ver?
 	if(MatchMode != "")
 	{
 		nmpone := numMatches + 1
@@ -360,11 +372,11 @@ QueueMatch() {
 	Sleep, sleepDelay*6
 	SendEvent {Enter}
 	Sleep, sleepDelay*6
-	WinActivate, Field Control
+	WinActivate, %fieldControlNameIs%
 	Sleep, sleepDelay*6
-	WinActivate, Field Control
+	WinActivate, %fieldControlNameIs%
 	Sleep, sleepDelay*6
-	ControlGetText, StaticOneText, Static1, Field Control
+	ControlGetText, StaticOneText, Static1, %fieldControlNameIs%
 	if(StaticOneText == "Q"+ (numMatches+1)) {
 		Menu, TRAY, delete, Current Match: %numMatches%
 		numMatches ++
@@ -375,21 +387,21 @@ QueueMatch() {
 		QueueMatch()
 		return
 	}
-	ControlGetText, SavedMatchText, Static2, Field Control
+	ControlGetText, SavedMatchText, Static2, %fieldControlNameIs%
 	Sleep, sleepDelay*6
 	if(lastSavedMatchText == SavedMatchText) ;just go to intro if we don't have a new 'saved match results'
 	{
-		ControlClick, Button21, Field Control,,,,NA ;intro
-		ControlClick, Button21, Field Control,,,,NA
-		ControlClick, Button21, Field Control,,,,NA
+		ControlClick, Button21, %fieldControlNameIs%,,,,NA ;intro
+		ControlClick, Button21, %fieldControlNameIs%,,,,NA
+		ControlClick, Button21, %fieldControlNameIs%,,,,NA
 		SetTimer, BackToIntro, Off
 	}
 	else
 	{
 		SetTimer, BackToIntro, 10000 ;back to intro after X seconds (from displaying scores)
-		ControlClick, Button23, Field Control,,,,NA ;saved results
-		ControlClick, Button23, Field Control,,,,NA ;saved results
-		ControlClick, Button23, Field Control,,,,NA ;saved results
+		ControlClick, Button23, %fieldControlNameIs%,,,,NA ;saved results
+		ControlClick, Button23, %fieldControlNameIs%,,,,NA ;saved results
+		ControlClick, Button23, %fieldControlNameIs%,,,,NA ;saved results
 		lastSavedMatchText := SavedMatchText
 	}
 	failedToQueueCount := 0
@@ -444,7 +456,7 @@ checkScreenScaling() {
 	Sleep, sleepDelay*6
 	SendEvent {Enter}
 	Sleep, sleepDelay*6
-	ControlGetText, StaticOneText, Static1, Field Control
+	ControlGetText, StaticOneText, Static1, %fieldControlNameIs%
 	if(StaticOneText == "Q1") {
 		theScreenScaling := theScreenScalingTest ;when we succeed, set our normalized screen scaling to the test value
 		if(DebugActive == "true") {
