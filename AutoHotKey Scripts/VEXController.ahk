@@ -38,6 +38,7 @@ global theScreenScalingTest = 100 ;this test value increases by 25 every 'failed
 global lastSavedMatchText = ""
 ;MsgBox %A_ScreenWidth% ;DEBUG
 global fieldControlNameIs = "Field Control"
+global inVexIQMode = "false"
 
 ;Menu, TRAY, Icon, favicon.ico ;icon is set via AHK2EXE
 Menu, TRAY, nostandard
@@ -64,7 +65,7 @@ thisY := oAccLoc.y
 ;MsgBox %thisX% %thisY% ;DEBUG
 matchQueueDifference := (Qual2Loc.y - Qual1Loc.y) / 2 ;this is 16 / 2 = 8 on a 1920x1200 screen
 
-ControlGetText, EDRorIQ, Button5, %fieldControlNameIs%
+ControlGetText, EDRorIQ, Button6, %fieldControlNameIs%
 if(EDRorIQ == "Red") {
 	matchTimeDelay = 110000 ;Autonomous Winner below None = Red for EDR
 }
@@ -80,6 +81,7 @@ if(EDRorIQ == "Red") {
 }
 else if(EDRorIQ == "Team 1") {
 	matchTimeDelay = 65000 ;Autonomous Winner below None = Team 1 for IQ
+	inVexIQMode := "true"
 }
 else {
 	ToolTip matchTimeDelay is unknown`, EDR by default
@@ -121,9 +123,9 @@ Loop {
 		Sleep, sleepDelay
 		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		ControlClick, Button21, %fieldControlNameIs%,,,,NA
-		ControlClick, Button21, %fieldControlNameIs%,,,,NA
-		ControlClick, Button21, %fieldControlNameIs%,,,,NA
+		ControlClick, Button22, %fieldControlNameIs%,,,,NA
+		ControlClick, Button22, %fieldControlNameIs%,,,,NA
+		ControlClick, Button22, %fieldControlNameIs%,,,,NA
 		Sleep, sleepDelay
 	return
 	3Joy5::
@@ -174,9 +176,9 @@ Loop {
 		Sleep, sleepDelay
 		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		ControlClick, Button23, %fieldControlNameIs%,,,,NA
-		ControlClick, Button23, %fieldControlNameIs%,,,,NA
-		ControlClick, Button23, %fieldControlNameIs%,,,,NA
+		ControlClick, Button24, %fieldControlNameIs%,,,,NA
+		ControlClick, Button24, %fieldControlNameIs%,,,,NA
+		ControlClick, Button24, %fieldControlNameIs%,,,,NA
 		Sleep, sleepDelay
 	return
 	3Joy2::
@@ -190,8 +192,13 @@ Loop {
 		Sleep, sleepDelay
 		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay*3
-		ControlClick, Button11, %fieldControlNameIs%,,,,NA
+		ControlClick, Button12, %fieldControlNameIs%,,,,NA
 		Sleep, sleepDelay
+		if(inVexIQMode == "true") {
+			matchStartTime = %A_TickCount%
+			SetTimer, BackToIntro, Off ;in case we start matches back to back quickly, disable switching to intro after we've started a match
+			QueuedMatch = 0
+		}
 		if(MatchMode == "PAUSED" || MatchMode == "DRIVER CONTROL") ;check the text under Match Timer for Paused or Driver Control
 		{
 			matchStartTime = %A_TickCount%
@@ -245,10 +252,10 @@ BackToIntro:
 	{
 		return
 	}
-	ControlClick, Button21, %fieldControlNameIs%,,,,NA ;intro
-	ControlClick, Button21, %fieldControlNameIs%,,,,NA
-	ControlClick, Button21, %fieldControlNameIs%,,,,NA
 	SetTimer, BackToIntro, Off
+	ControlClick, Button22, %fieldControlNameIs%,,,,NA ;intro
+	ControlClick, Button22, %fieldControlNameIs%,,,,NA
+	ControlClick, Button22, %fieldControlNameIs%,,,,NA
 return
 
 RefScoreSet:
