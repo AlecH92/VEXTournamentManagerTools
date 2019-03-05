@@ -1,6 +1,7 @@
 ## Tournament Manager Tools
 * This repository contains AutoHotKey scripts used for automating tasks in Tournament Manager
 * The Arduino and CAD folders contain programs and models for physical components used
+* The OBS folder contains setup and usage info, to be used with DisplayControl
 * The VEXController script can be utilized with a generic USB joystick (Xbox/PS4 controller etc)
 
 ### Below is information on the AutoHotKey scripts
