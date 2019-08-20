@@ -12,7 +12,7 @@ SetWorkingDir %A_ScriptDir%
 
 CoordMode, Mouse, Screen
 
-global numMatches = 0
+global numMatches = 1 ;start at 1 since we use the 'queue next match' button
 global sleepDelay = 10
 global FoundX = 0
 global FoundY = 0
@@ -65,21 +65,23 @@ thisY := oAccLoc.y
 ;MsgBox %thisX% %thisY% ;DEBUG
 matchQueueDifference := (Qual2Loc.y - Qual1Loc.y) / 2 ;this is 16 / 2 = 8 on a 1920x1200 screen
 
-ControlGetText, EDRorIQ, Button6, %fieldControlNameIs%
-if(EDRorIQ == "Red") {
+ControlGetText, EDRorIQ, Button7, %fieldControlNameIs%
+;MsgBox %EDRorIQ% ;DEBUG
+if (InStr(EDRorIQ, "Red") or InStr(EDRorIQ, "Blue")) {
 	matchTimeDelay = 110000 ;Autonomous Winner below None = Red for EDR
 }
-else if(EDRorIQ == "Team 1") {
+else if InStr(EDRorIQ, "Team") {
 	matchTimeDelay = 65000 ;Autonomous Winner below None = Team 1 for IQ
+	inVexIQMode := "true"
 }
 else {
 	InputBox, fieldControlNameIs, % "Is your Field Control named differently? Please input it (Field Sets > first entry)"
 }
-ControlGetText, EDRorIQ, Button6, %fieldControlNameIs%
-if(EDRorIQ == "Red") {
+ControlGetText, EDRorIQ, Button7, %fieldControlNameIs%
+if (InStr(EDRorIQ, "Red") or InStr(EDRorIQ, "Blue")) { ;checking for red or blue
 	matchTimeDelay = 110000 ;Autonomous Winner below None = Red for EDR
 }
-else if(EDRorIQ == "Team 1") {
+else if InStr(EDRorIQ, "Team") { ;checking only for "Team"
 	matchTimeDelay = 65000 ;Autonomous Winner below None = Team 1 for IQ
 	inVexIQMode := "true"
 }
@@ -87,25 +89,6 @@ else {
 	ToolTip matchTimeDelay is unknown`, EDR by default
 	InputBox, theScreenScaling, % "matchTimeDelay unknown? 110000 is default"
 	matchTimeDelay = 110000 ;2017 IQ has no auton winner buttons - they are invisible. still is found as "Team 1"
-}
-
-checkScreenScaling()
-
-if(DebugActive == "true") {
-	MsgBox The screen scaling was determined to be ( %theScreenScaling% )( %theScreenScalingTest% )
-}
-
-if(theScreenScaling == 0)
-{
-	InputBox, theScreenScaling, % "Screen scaling? 100% is default"
-}
-if(theScreenScaling == 0)
-{
-	theScreenScaling = 100 ;if it's still 0, set to 100
-}
-
-if(DebugActive == "true") {
-	MsgBox The screen scaling was determined to be ( %theScreenScaling% )( %theScreenScalingTest% )
 }
 
 SetMenu()
@@ -123,9 +106,9 @@ Loop {
 		Sleep, sleepDelay
 		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		ControlClick, Button22, %fieldControlNameIs%,,,,NA
-		ControlClick, Button22, %fieldControlNameIs%,,,,NA
-		ControlClick, Button22, %fieldControlNameIs%,,,,NA
+		ControlClick, Button23, %fieldControlNameIs%,,,,NA
+		ControlClick, Button23, %fieldControlNameIs%,,,,NA
+		ControlClick, Button23, %fieldControlNameIs%,,,,NA
 		Sleep, sleepDelay
 	return
 	3Joy5::
@@ -135,9 +118,9 @@ Loop {
 		Sleep, sleepDelay
 		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		ControlClick, Button4, %fieldControlNameIs%,,,,NA
-		ControlClick, Button4, %fieldControlNameIs%,,,,NA
-		ControlClick, Button4, %fieldControlNameIs%,,,,NA
+		ControlClick, Button5, %fieldControlNameIs%,,,,NA
+		ControlClick, Button5, %fieldControlNameIs%,,,,NA
+		ControlClick, Button5, %fieldControlNameIs%,,,,NA
 		Sleep, sleepDelay
 	return
 	3Joy6::
@@ -147,9 +130,9 @@ Loop {
 		Sleep, sleepDelay
 		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		ControlClick, Button5, %fieldControlNameIs%,,,,NA
-		ControlClick, Button5, %fieldControlNameIs%,,,,NA
-		ControlClick, Button5, %fieldControlNameIs%,,,,NA
+		ControlClick, Button7, %fieldControlNameIs%,,,,NA
+		ControlClick, Button7, %fieldControlNameIs%,,,,NA
+		ControlClick, Button7, %fieldControlNameIs%,,,,NA
 		Sleep, sleepDelay
 	return
 	3Joy7::
@@ -159,9 +142,9 @@ Loop {
 		Sleep, sleepDelay
 		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		ControlClick, Button6, %fieldControlNameIs%,,,,NA
-		ControlClick, Button6, %fieldControlNameIs%,,,,NA
-		ControlClick, Button6, %fieldControlNameIs%,,,,NA
+		ControlClick, Button8, %fieldControlNameIs%,,,,NA
+		ControlClick, Button8, %fieldControlNameIs%,,,,NA
+		ControlClick, Button8, %fieldControlNameIs%,,,,NA
 		Sleep, sleepDelay
 	return
 	3Joy1::
@@ -176,9 +159,9 @@ Loop {
 		Sleep, sleepDelay
 		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		ControlClick, Button24, %fieldControlNameIs%,,,,NA
-		ControlClick, Button24, %fieldControlNameIs%,,,,NA
-		ControlClick, Button24, %fieldControlNameIs%,,,,NA
+		ControlClick, Button25, %fieldControlNameIs%,,,,NA
+		ControlClick, Button25, %fieldControlNameIs%,,,,NA
+		ControlClick, Button25, %fieldControlNameIs%,,,,NA
 		Sleep, sleepDelay
 	return
 	3Joy2::
@@ -192,7 +175,7 @@ Loop {
 		Sleep, sleepDelay
 		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay*3
-		ControlClick, Button12, %fieldControlNameIs%,,,,NA
+		ControlClick, Button13, %fieldControlNameIs%,,,,NA
 		Sleep, sleepDelay
 		if(inVexIQMode == "true") {
 			matchStartTime = %A_TickCount%
@@ -253,9 +236,9 @@ BackToIntro:
 		return
 	}
 	SetTimer, BackToIntro, Off
-	ControlClick, Button22, %fieldControlNameIs%,,,,NA ;intro
-	ControlClick, Button22, %fieldControlNameIs%,,,,NA
-	ControlClick, Button22, %fieldControlNameIs%,,,,NA
+	ControlClick, Button23, %fieldControlNameIs%,,,,NA ;intro
+	ControlClick, Button23, %fieldControlNameIs%,,,,NA
+	ControlClick, Button23, %fieldControlNameIs%,,,,NA
 return
 
 RefScoreSet:
@@ -302,6 +285,9 @@ RefScoreSetSwap:
 	SetMenu()
 return
 
+SetLastSavedMatch:
+return
+
 SetMenu() {
 	Menu, TRAY, deleteall
 	Menu, TRAY, add, Current Match: %numMatches%, SetCurrentMatch
@@ -310,7 +296,7 @@ SetMenu() {
 	Menu, TRAY, add, Auto Save Ref Scores: %RefScoreSetVar%, RefScoreSetSwap
 	Menu, TRAY, add, Debugging Active: %DebugActive%, SetDebugActive
 	Menu, TRAY, add, Match Length: %matchTimeDelay%, SetMatchTimeDelay
-	Menu, TRAY, add, Last Saved Match: %lastSavedMatchText%
+	Menu, TRAY, add, Last Saved Match: %lastSavedMatchText%, SetLastSavedMatch
 	Menu, TRAY, add
 	Menu, TRAY, add, Exit, Exit
 return
@@ -346,43 +332,8 @@ QueueMatch() {
 		return
 	}
 	QueuedMatch = 1
-	WinActivate VEX Tournament Manager
-	ControlClick, SysTreeView321, VEX Tournament Manager,,,,NA
+	ControlClick, Button2, %fieldControlNameIs%,,,,NA ;queue next match button
 	Sleep, sleepDelay*2
-	MyTV.SetSelection(hItem)
-	oRect := Acc_Location(oAcc, 5+numMatches) ;Qual 1 is 5, 5+0 = Qual 1, 5+1 = Qual 2 etc
-	accName := oAcc.AccName(5+numMatches) ;we get the name "Qual #" to compare down below
-	if(DebugActive == "true") {
-		MsgBox QueueMatch:Acc Found %accName%
-	}
-	IfNotInString, accName, Qual
-	{
-		;check that we are actually queueing a Qual match
-		if(DebugActive == "true") {
-			MsgBox QueueMatch:NotInString We got a non-Qual, resetting
-		}
-		hItem = 0
-		return
-	}
-	theY := oRect.y + matchQueueDifference
-	theX := oRect.x
-	theX := theX * (theScreenScaling / 100)
-	theY := theY * (theScreenScaling / 100)
-	if(DebugActive == "true") {
-		MsgBox %theX% %theY%
-	}
-	MouseMove, %theX%,%theY%
-	Sleep, sleepDelay*3
-	SendEvent {Click right}
-	Sleep, sleepDelay*6
-	SendEvent {Down}
-	Sleep, sleepDelay*6
-	SendEvent {Enter}
-	Sleep, sleepDelay*6
-	WinActivate, %fieldControlNameIs%
-	Sleep, sleepDelay*6
-	WinActivate, %fieldControlNameIs%
-	Sleep, sleepDelay*6
 	ControlGetText, StaticOneText, Static1, %fieldControlNameIs%
 	if(StaticOneText == "Q"+ (numMatches+1)) {
 		Menu, TRAY, delete, Current Match: %numMatches%
@@ -398,17 +349,17 @@ QueueMatch() {
 	Sleep, sleepDelay*6
 	if(lastSavedMatchText == SavedMatchText) ;just go to intro if we don't have a new 'saved match results'
 	{
-		ControlClick, Button21, %fieldControlNameIs%,,,,NA ;intro
-		ControlClick, Button21, %fieldControlNameIs%,,,,NA
-		ControlClick, Button21, %fieldControlNameIs%,,,,NA
+		ControlClick, Button23, %fieldControlNameIs%,,,,NA ;intro
+		ControlClick, Button23, %fieldControlNameIs%,,,,NA
+		ControlClick, Button23, %fieldControlNameIs%,,,,NA
 		SetTimer, BackToIntro, Off
 	}
 	else
 	{
 		SetTimer, BackToIntro, 10000 ;back to intro after X seconds (from displaying scores)
-		ControlClick, Button23, %fieldControlNameIs%,,,,NA ;saved results
-		ControlClick, Button23, %fieldControlNameIs%,,,,NA ;saved results
-		ControlClick, Button23, %fieldControlNameIs%,,,,NA ;saved results
+		ControlClick, Button25, %fieldControlNameIs%,,,,NA ;saved results
+		ControlClick, Button25, %fieldControlNameIs%,,,,NA ;saved results
+		ControlClick, Button25, %fieldControlNameIs%,,,,NA ;saved results
 		lastSavedMatchText := SavedMatchText
 	}
 	failedToQueueCount := 0
@@ -432,53 +383,3 @@ return
 Exit:
 	ExitApp
 return
-
-checkScreenScaling() {
-	if(theScreenScalingTest > 300) ;we're past any 'real' screen scale, just exit
-	{
-		theScreenScaling := 0 ; set back to zero so we'll prompt later
-		MsgBox % "Setting screen scaling failed"
-		return
-	}
-	WinActivate VEX Tournament Manager
-	ControlClick, SysTreeView321, VEX Tournament Manager,,,,NA
-	Sleep, sleepDelay*2
-	MyTV.SetSelection(hItem)
-	oRect := Acc_Location(oAcc, 5) ;Qual 1 is 5, 5+0 = Qual 1, 5+1 = Qual 2 etc
-	accName := oAcc.AccName(5) ;we get the name "Qual #" to compare down below
-	IfNotInString, accName, Qual
-	{
-		;check that we are actually queueing a Qual match
-		MsgBox QueueMatch:NotInString We got a non-Qual
-	}
-	theY := oRect.y + matchQueueDifference
-	theX := oRect.x
-	theX := theX * (theScreenScalingTest / 100) ;test with 100 to start
-	theY := theY * (theScreenScalingTest / 100)
-	MouseMove, %theX%,%theY%
-	Sleep, sleepDelay*3
-	SendEvent {Click right}
-	Sleep, sleepDelay*6
-	SendEvent {Down}
-	Sleep, sleepDelay*6
-	SendEvent {Enter}
-	Sleep, sleepDelay*6
-	ControlGetText, StaticOneText, Static1, %fieldControlNameIs%
-	if(StaticOneText == "Q1") {
-		theScreenScaling := theScreenScalingTest ;when we succeed, set our normalized screen scaling to the test value
-		if(DebugActive == "true") {
-			MsgBox Setting screen scaling to  %theScreenScaling%
-		}
-		return
-	}
-	else
-	{
-		theScreenScalingTest := theScreenScalingTest + 25 ; increase by 25 each 'failed' attempt, re-attempt
-		if(DebugActive == "true") {
-			MsgBox Setting screen scaling test to  %theScreenScalingTest%
-		}
-		Sleep, 500 ;pause 
-		checkScreenScaling()
-	}
-	return
-}

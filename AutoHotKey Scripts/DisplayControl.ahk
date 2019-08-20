@@ -9,11 +9,11 @@ CoordMode, Mouse, Relative
 
 global fieldControlNameIs = "Field Control"
 
-ControlGetText, testForFieldControl, Button6, %fieldControlNameIs%
-if(testForFieldControl == "Red") {
+ControlGetText, testForFieldControl, Button7, %fieldControlNameIs%
+if (InStr(testForFieldControl, "Red") or InStr(testForFieldControl, "Blue")) {
 	Sleep, 10 ;we're EDR, and Field Control was detected
 }
-else if(testForFieldControl == "Team 1") {
+else if InStr(testForFieldControl, "Team") {
 	Sleep, 10 ;we're IQ, and Field Control was detected
 }
 else {
@@ -37,8 +37,8 @@ Loop {
 }
 
 DisplayChange:
-	ControlGet, currentlyInMatch, Checked , , Button22, %fieldControlNameIs%
-	ControlGet, currentlyInIntro, Checked , , Button21, %fieldControlNameIs%
+	ControlGet, currentlyInMatch, Checked , , Button24, %fieldControlNameIs%
+	ControlGet, currentlyInIntro, Checked , , Button23, %fieldControlNameIs%
 	;ToolTip %currentlyInMatch% ;DEBUG
 	if(currentlyInMatch) { ;if In-Match is selected
 		SendMessage, 0x147, 0, 0, ComboBox1, %fieldControlNameIs%  ; 0x147 is CB_GETCURSEL (for a DropDownList or ComboBox).
