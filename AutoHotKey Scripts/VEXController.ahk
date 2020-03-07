@@ -19,6 +19,7 @@ global FoundY = 0
 global DebugActive = "false"
 ;global DebugActive = "true"
 
+global inFinals = "false"
 global AutoQueueMatches = "true" ;if true, uncomment line below
 SetTimer, CheckQueue, 1000
 global RefScoreSetVar = "false" ;if true, uncomment line below
@@ -273,6 +274,16 @@ SwapAutoQueue:
 	SetMenu()
 return
 
+SwapInFinals:
+	if(inFinals == "true") {
+		inFinals := "false"
+	}
+	else {
+		inFinals := "true"
+	}
+	SetMenu()
+return
+
 RefScoreSetSwap:
 	if(RefScoreSetVar == "true") {
 		SetTimer, RefScoreSet, Off
@@ -294,6 +305,7 @@ SetMenu() {
 	Menu, TRAY, add, Sleep Delay: %sleepDelay%, SetSleepDelay
 	Menu, TRAY, add, Auto Queue Matches: %AutoQueueMatches%, SwapAutoQueue
 	Menu, TRAY, add, Auto Save Ref Scores: %RefScoreSetVar%, RefScoreSetSwap
+	Menu, TRAY, add, In Finals: %inFinals%, SwapInFinals
 	Menu, TRAY, add, Debugging Active: %DebugActive%, SetDebugActive
 	Menu, TRAY, add, Match Length: %matchTimeDelay%, SetMatchTimeDelay
 	Menu, TRAY, add, Last Saved Match: %lastSavedMatchText%, SetLastSavedMatch
@@ -335,7 +347,10 @@ QueueMatch() {
 	ControlClick, Button2, %fieldControlNameIs%,,,,NA ;queue next match button
 	Sleep, sleepDelay*2
 	ControlGetText, StaticOneText, Static1, %fieldControlNameIs%
-	if(StaticOneText == "Q"+ (numMatches+1)) {
+	if(inFinals == "true") {
+		; we don't care if we're in finals, ignore if we don't match the StaticOne text
+	}
+	else if(StaticOneText == "Q"+ (numMatches+1)) {
 		Menu, TRAY, delete, Current Match: %numMatches%
 		numMatches ++
 	}
@@ -368,6 +383,11 @@ QueueMatch() {
 	if not hItem { ; No more items in tree.
 		if(DebugActive == "true") {
 			MsgBox QueueMatch Found no more items in the SysTreeView
+		}
+		;we've gone through all the matches, turn on finals?
+		if(inFinals == "false") {
+			inFinals := "true"
+			SetMenu()
 		}
 		hItem = 0
 		return
