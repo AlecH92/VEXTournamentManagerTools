@@ -4,6 +4,7 @@
 #Include Const_Process.ahk
 #Include Const_Memory.ahk
 #Include RemoteTreeViewClass.ahk
+#Include Acc.ahk
 
 SetBatchLines -1
 ListLines Off
@@ -22,6 +23,8 @@ global DebugActive = "false"
 global inFinals = "false"
 global AutoQueueMatches = "true" ;if true, uncomment line below
 SetTimer, CheckQueue, 1000
+global AutoShowScores = "true" ;auto show scores determines if we should automatically display the last score/or intro on a timer. this is to allow a ref to start matches without us recording the start time.
+global notifiedScores = "false"
 global RefScoreSetVar = "false" ;if true, uncomment line below
 ;SetTimer, RefScoreSet, 5000 ;Disabled, untested in latest TM versions
 global matchStartTime = A_TickCount
@@ -38,7 +41,7 @@ global theScreenScaling = 0
 global theScreenScalingTest = 100 ;this test value increases by 25 every 'failed' test
 global lastSavedMatchText = ""
 ;MsgBox %A_ScreenWidth% ;DEBUG
-global fieldControlNameIs = "Field Control"
+global fieldControlNameIs = "Match Field Set #1"
 global inVexIQMode = "false"
 
 ;Menu, TRAY, Icon, favicon.ico ;icon is set via AHK2EXE
@@ -263,6 +266,15 @@ RefScoreSet:
 	}
 return
 
+SwapAutoScores:
+	if(AutoShowScores == "true") {
+		AutoShowScores := "false"
+	}
+	else {
+		AutoShowScores := "true"
+	}
+	SetMenu()
+return
 
 SwapAutoQueue:
 	if(AutoQueueMatches == "true") {
@@ -303,6 +315,7 @@ SetMenu() {
 	Menu, TRAY, deleteall
 	Menu, TRAY, add, Current Match: %numMatches%, SetCurrentMatch
 	Menu, TRAY, add, Sleep Delay: %sleepDelay%, SetSleepDelay
+	Menu, TRAY, add, Auto Show Scores If-Ref: %AutoShowScores%, SwapAutoScores
 	Menu, TRAY, add, Auto Queue Matches: %AutoQueueMatches%, SwapAutoQueue
 	Menu, TRAY, add, Auto Save Ref Scores: %RefScoreSetVar%, RefScoreSetSwap
 	Menu, TRAY, add, In Finals: %inFinals%, SwapInFinals
@@ -315,6 +328,15 @@ return
 }
 
 CheckQueue:
+	ControlGetText, MatchMode, Static4, %fieldControlNameIs% ;IQ=4, EDR=4, changed in a previous ver?
+	if(MatchMode == "" && AutoShowScores == "true" && notifiedScores == "false")
+	{
+		notifiedScores := "true"
+		SetTimer, ShowScoresOrIntro, 5000 ;we are going to wait 5 seconds and then determine if we show scores or the intro screen
+	}
+	if(MatchMode == "DRIVER CONTROL" && AutoShowScores == "true" && notifiedScores == "true") {
+		notifiedScores := "false"
+	}
 	theDifference := A_TickCount - matchStartTime
 	if(DebugActive == "true") {
 		;ToolTip %A_TickCount% %matchStartTime% %theDifference% %QueuedMatch% ;DEBUG
@@ -327,6 +349,27 @@ CheckQueue:
 		}
 	}
 return
+
+ShowScoresOrIntro() {
+	ControlGetText, SavedMatchText, Static2, %fieldControlNameIs%
+	Sleep, sleepDelay*6
+	if(lastSavedMatchText == SavedMatchText) ;just go to intro if we don't have a new 'saved match results'
+	{
+		ControlClick, Button23, %fieldControlNameIs%,,,,NA ;intro
+		ControlClick, Button23, %fieldControlNameIs%,,,,NA
+		ControlClick, Button23, %fieldControlNameIs%,,,,NA
+		SetTimer, BackToIntro, Off
+	}
+	else
+	{
+		SetTimer, BackToIntro, 10000 ;back to intro after X seconds (from displaying scores)
+		ControlClick, Button25, %fieldControlNameIs%,,,,NA ;saved results
+		ControlClick, Button25, %fieldControlNameIs%,,,,NA ;saved results
+		ControlClick, Button25, %fieldControlNameIs%,,,,NA ;saved results
+		lastSavedMatchText := SavedMatchText
+	}
+	return
+}
 
 QueueMatch() {
 	ControlGetText, MatchMode, Static4, %fieldControlNameIs% ;IQ=4, EDR=4, changed in a previous ver?
