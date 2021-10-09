@@ -46,25 +46,25 @@ DisplayChange:
 		ChoicePos += 1  ; Convert from 0-based to 1-based, i.e. so that the first item is known as 1, not 0.
 		;ToolTip %ChoicePos% ;DEBUG
 		if(ChoicePos == "1") {
-			ControlSend,,{F9}, ahk_class Qt5QWindowIcon ;field 1
+			ControlSend,,{F9}, ahk_class Qt5152QWindowIcon ;field 1
 		}
 		else if(ChoicePos == "2") {
-			ControlSend,,{F10}, ahk_class Qt5QWindowIcon ;field 2
+			ControlSend,,{F10}, ahk_class Qt5152QWindowIcon ;field 2
 		}
 		else {
-			ControlSend,,{F5}, ahk_class Qt5QWindowIcon ;field 3
+			ControlSend,,{F5}, ahk_class Qt5152QWindowIcon ;field 3
 		}
 	}
 	else if(currentlyInIntro) {
 		if(inFinals == "true") {
-				ControlSend,,{F8}, ahk_class Qt5QWindowIcon ;combined, between matches, in finals (bottom displays elim bracket + last scores)
+				ControlSend,,{F8}, ahk_class Qt5152QWindowIcon ;combined, between matches, in finals (bottom displays elim bracket + last scores)
 		}
 		else {
-			ControlSend,,{F7}, ahk_class Qt5QWindowIcon ;combined, between matches
+			ControlSend,,{F7}, ahk_class Qt5152QWindowIcon ;combined, between matches
 		}
 	}
 	else {
-		ControlSend,,{F6}, ahk_class Qt5QWindowIcon ;not intro, not in-match, show full audience dis?
+		ControlSend,,{F6}, ahk_class Qt5152QWindowIcon ;not intro, not in-match, show full audience dis?
 	}
 return
 
