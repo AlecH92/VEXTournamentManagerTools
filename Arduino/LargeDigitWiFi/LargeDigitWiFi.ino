@@ -36,8 +36,8 @@ byte segmentData = 25;
 #include <ESPAsyncWebServer.h>
 
 /*Put your SSID & Password*/
-const char* ssid = "SDRL-2";  // Enter SSID here
-const char* password = "SDRL_League_2019";  //Enter Password here
+const char* ssid = "SSID";  // Enter SSID here
+const char* password = "Password";  //Enter Password here
 
 //WebServer server(80);
 AsyncWebServer server(80);
@@ -63,6 +63,7 @@ void setup()
   digitalWrite(segmentData, LOW);
   digitalWrite(segmentLatch, LOW);
   delay(100);
+  showNumber(88);
   //pinMode(LED1pin, OUTPUT);
   //pinMode(LED2pin, OUTPUT);
 
@@ -71,12 +72,16 @@ void setup()
 
   //connect to your local wi-fi network
   WiFi.begin(ssid, password);
+  float toShow = 1.00;
 
   //check wi-fi is connected to wi-fi network
   while (WiFi.status() != WL_CONNECTED) {
-  delay(1000);
-  Serial.print(".");
+    delay(1000);
+    Serial.print(".");
+    showNumber(toShow);
+    toShow = toShow + 1.00;
   }
+  showNumber(99);
   Serial.println("");
   Serial.println("WiFi connected..!");
   Serial.print("Got IP: ");  Serial.println(WiFi.localIP());
