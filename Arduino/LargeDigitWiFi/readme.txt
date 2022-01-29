@@ -1,3 +1,8 @@
+Requires libraries:
+https://github.com/me-no-dev/ESPAsyncWebServer
+https://github.com/me-no-dev/AsyncTCP
+
+
 We are testing out a new method of alerting participants to the next upcoming match on a field.
 
 Utilizing:
