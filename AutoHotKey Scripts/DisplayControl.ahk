@@ -7,7 +7,7 @@ SetWorkingDir %A_ScriptDir%
 
 CoordMode, Mouse, Relative
 
-global fieldControlNameIs = "Field Control"
+global fieldControlNameIs = "Match Field Set #1"
 
 ControlGetText, testForFieldControl, Button7, %fieldControlNameIs%
 if (InStr(testForFieldControl, "Red") or InStr(testForFieldControl, "Blue")) {
