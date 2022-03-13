@@ -351,6 +351,11 @@ CheckQueue:
 return
 
 ShowScoresOrIntro() {
+	if(MatchMode != "")
+	{
+		SetTimer, ShowScoresOrIntro, Off
+		return
+	}
 	ControlGetText, SavedMatchText, Static2, %fieldControlNameIs%
 	Sleep, sleepDelay*6
 	if(lastSavedMatchText == SavedMatchText) ;just go to intro if we don't have a new 'saved match results'
@@ -368,6 +373,7 @@ ShowScoresOrIntro() {
 		ControlClick, Button25, %fieldControlNameIs%,,,,NA ;saved results
 		lastSavedMatchText := SavedMatchText
 	}
+	SetTimer, ShowScoresOrIntro, Off
 	return
 }
 
