@@ -235,6 +235,10 @@ return
 
 BackToIntro:
 	ControlGetText, MatchMode, Static4, %fieldControlNameIs%
+	if ErrorLevel
+	{
+		return ;we had an issue finding Field Control?? Don't do anything...
+	}
 	if(MatchMode != "")
 	{
 		return
@@ -329,8 +333,14 @@ return
 
 CheckQueue:
 	ControlGetText, MatchMode, Static4, %fieldControlNameIs% ;IQ=4, EDR=4, changed in a previous ver?
+	if ErrorLevel
+	{
+		return ;we had an issue finding Field Control?? Don't do anything...
+	}
+	;ToolTip MatchMode is %MatchMode%
 	if(MatchMode == "" && AutoShowScores == "true" && notifiedScores == "false")
 	{
+		;ToolTip "Showing intro via CheckQueue..."
 		notifiedScores := "true"
 		SetTimer, ShowScoresOrIntro, 5000 ;we are going to wait 5 seconds and then determine if we show scores or the intro screen
 	}
@@ -351,6 +361,11 @@ CheckQueue:
 return
 
 ShowScoresOrIntro() {
+	ControlGetText, MatchMode, Static4, %fieldControlNameIs% ;IQ=4, EDR=4, changed in a previous ver?
+	if ErrorLevel
+	{
+		return ;we had an issue finding Field Control?? Don't do anything...
+	}
 	if(MatchMode != "")
 	{
 		SetTimer, ShowScoresOrIntro, Off

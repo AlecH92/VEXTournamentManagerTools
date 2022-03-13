@@ -38,6 +38,10 @@ Loop {
 
 DisplayChange:
 	ControlGet, currentlyInMatch, Checked , , Button24, %fieldControlNameIs%
+	if ErrorLevel
+	{
+		return ;we had an issue finding Field Control?? Don't do anything...
+	}
 	ControlGet, currentlyInIntro, Checked , , Button23, %fieldControlNameIs%
 	;ToolTip %currentlyInMatch% ;DEBUG
 	if(currentlyInMatch) { ;if In-Match is selected
