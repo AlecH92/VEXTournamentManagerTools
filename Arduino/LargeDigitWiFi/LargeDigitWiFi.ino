@@ -50,10 +50,21 @@ uint8_t LED2pin = 5;
 bool LED2status = LOW;
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
+const char index_html[] PROGMEM = R"rawliteral(
+<!DOCTYPE HTML><html><head>
+  <title>Field 1 Queue</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"></head><body>
+  <form action="/post" method="post">
+    <input type="number" name="number" id="number">
+    <input type="submit" value="Submit">
+  </form>
+</body></html>)rawliteral";
+
+
 void setup()
 {
   Serial.begin(9600);
-  Serial.println("Large Digit Driver Example");
+  Serial.println("Field 1 Queue");
 
   pinMode(segmentClock, OUTPUT);
   pinMode(segmentData, OUTPUT);
@@ -86,7 +97,9 @@ void setup()
   Serial.println("WiFi connected..!");
   Serial.print("Got IP: ");  Serial.println(WiFi.localIP());
 
-  
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/html", index_html);
+  });
  
   server.on("/post", HTTP_POST, [](AsyncWebServerRequest *request){
 

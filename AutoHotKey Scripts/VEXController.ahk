@@ -5,6 +5,7 @@
 #Include Const_Memory.ahk
 #Include RemoteTreeViewClass.ahk
 #Include Acc.ahk
+#Include VEX_Shared.ahk
 
 SetBatchLines -1
 ListLines Off
@@ -69,6 +70,7 @@ thisY := oAccLoc.y
 ;MsgBox %thisX% %thisY% ;DEBUG
 matchQueueDifference := (Qual2Loc.y - Qual1Loc.y) / 2 ;this is 16 / 2 = 8 on a 1920x1200 screen
 
+;we try to get button7 by default - if the field control name is different, we'll catch it here.
 ControlGetText, EDRorIQ, Button7, %fieldControlNameIs%
 ;MsgBox %EDRorIQ% ;DEBUG
 if (InStr(EDRorIQ, "Red") or InStr(EDRorIQ, "Blue")) {
@@ -81,6 +83,9 @@ else if InStr(EDRorIQ, "Team") {
 else {
 	InputBox, fieldControlNameIs, % "Is your Field Control named differently? Please input it (Field Sets > first entry)"
 }
+
+UpdateButtonDefinitions()
+
 ControlGetText, EDRorIQ, Button7, %fieldControlNameIs%
 if (InStr(EDRorIQ, "Red") or InStr(EDRorIQ, "Blue")) { ;checking for red or blue
 	matchTimeDelay = 110000 ;Autonomous Winner below None = Red for EDR
@@ -110,9 +115,9 @@ Loop {
 		Sleep, sleepDelay
 		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		ControlClick, Button23, %fieldControlNameIs%,,,,NA
-		ControlClick, Button23, %fieldControlNameIs%,,,,NA
-		ControlClick, Button23, %fieldControlNameIs%,,,,NA
+		ControlClick, %IntroButton%, %fieldControlNameIs%,,,,NA
+		ControlClick, %IntroButton%, %fieldControlNameIs%,,,,NA
+		ControlClick, %IntroButton%, %fieldControlNameIs%,,,,NA
 		Sleep, sleepDelay
 	return
 	3Joy5::
@@ -122,9 +127,9 @@ Loop {
 		Sleep, sleepDelay
 		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		ControlClick, Button5, %fieldControlNameIs%,,,,NA
-		ControlClick, Button5, %fieldControlNameIs%,,,,NA
-		ControlClick, Button5, %fieldControlNameIs%,,,,NA
+		ControlClick, %AutonWinnerNoneButton%, %fieldControlNameIs%,,,,NA
+		ControlClick, %AutonWinnerNoneButton%, %fieldControlNameIs%,,,,NA
+		ControlClick, %AutonWinnerNoneButton%, %fieldControlNameIs%,,,,NA
 		Sleep, sleepDelay
 	return
 	3Joy6::
@@ -134,9 +139,9 @@ Loop {
 		Sleep, sleepDelay
 		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		ControlClick, Button7, %fieldControlNameIs%,,,,NA
-		ControlClick, Button7, %fieldControlNameIs%,,,,NA
-		ControlClick, Button7, %fieldControlNameIs%,,,,NA
+		ControlClick, %AutonWinnerRedButton%, %fieldControlNameIs%,,,,NA
+		ControlClick, %AutonWinnerRedButton%, %fieldControlNameIs%,,,,NA
+		ControlClick, %AutonWinnerRedButton%, %fieldControlNameIs%,,,,NA
 		Sleep, sleepDelay
 	return
 	3Joy7::
@@ -146,9 +151,9 @@ Loop {
 		Sleep, sleepDelay
 		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		ControlClick, Button8, %fieldControlNameIs%,,,,NA
-		ControlClick, Button8, %fieldControlNameIs%,,,,NA
-		ControlClick, Button8, %fieldControlNameIs%,,,,NA
+		ControlClick, %AutonWinnerBlueButton%, %fieldControlNameIs%,,,,NA
+		ControlClick, %AutonWinnerBlueButton%, %fieldControlNameIs%,,,,NA
+		ControlClick, %AutonWinnerBlueButton%, %fieldControlNameIs%,,,,NA
 		Sleep, sleepDelay
 	return
 	3Joy1::
@@ -163,9 +168,9 @@ Loop {
 		Sleep, sleepDelay
 		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay
-		ControlClick, Button25, %fieldControlNameIs%,,,,NA
-		ControlClick, Button25, %fieldControlNameIs%,,,,NA
-		ControlClick, Button25, %fieldControlNameIs%,,,,NA
+		ControlClick, %SavedMatchResultsButton%, %fieldControlNameIs%,,,,NA
+		ControlClick, %SavedMatchResultsButton%, %fieldControlNameIs%,,,,NA
+		ControlClick, %SavedMatchResultsButton%, %fieldControlNameIs%,,,,NA
 		Sleep, sleepDelay
 	return
 	3Joy2::
@@ -179,7 +184,7 @@ Loop {
 		Sleep, sleepDelay
 		WinActivate, %fieldControlNameIs%
 		Sleep, sleepDelay*3
-		ControlClick, Button13, %fieldControlNameIs%,,,,NA
+		ControlClick, %StartMatchButton%, %fieldControlNameIs%,,,,NA
 		Sleep, sleepDelay
 		if(inVexIQMode == "true") {
 			matchStartTime = %A_TickCount%
@@ -244,9 +249,9 @@ BackToIntro:
 		return
 	}
 	SetTimer, BackToIntro, Off
-	ControlClick, Button23, %fieldControlNameIs%,,,,NA ;intro
-	ControlClick, Button23, %fieldControlNameIs%,,,,NA
-	ControlClick, Button23, %fieldControlNameIs%,,,,NA
+	ControlClick, %IntroButton%, %fieldControlNameIs%,,,,NA ;intro
+	ControlClick, %IntroButton%, %fieldControlNameIs%,,,,NA
+	ControlClick, %IntroButton%, %fieldControlNameIs%,,,,NA
 return
 
 RefScoreSet:
@@ -375,22 +380,30 @@ ShowScoresOrIntro() {
 	Sleep, sleepDelay*6
 	if(lastSavedMatchText == SavedMatchText) ;just go to intro if we don't have a new 'saved match results'
 	{
-		ControlClick, Button23, %fieldControlNameIs%,,,,NA ;intro
-		ControlClick, Button23, %fieldControlNameIs%,,,,NA
-		ControlClick, Button23, %fieldControlNameIs%,,,,NA
+		ControlClick, %IntroButton%, %fieldControlNameIs%,,,,NA ;intro
+		ControlClick, %IntroButton%, %fieldControlNameIs%,,,,NA
+		ControlClick, %IntroButton%, %fieldControlNameIs%,,,,NA
 		SetTimer, BackToIntro, Off
 	}
 	else
 	{
 		SetTimer, BackToIntro, 10000 ;back to intro after X seconds (from displaying scores)
-		ControlClick, Button25, %fieldControlNameIs%,,,,NA ;saved results
-		ControlClick, Button25, %fieldControlNameIs%,,,,NA ;saved results
-		ControlClick, Button25, %fieldControlNameIs%,,,,NA ;saved results
+		ControlClick, %SavedMatchResultsButton%, %fieldControlNameIs%,,,,NA ;saved results
+		ControlClick, %SavedMatchResultsButton%, %fieldControlNameIs%,,,,NA
+		ControlClick, %SavedMatchResultsButton%, %fieldControlNameIs%,,,,NA
 		lastSavedMatchText := SavedMatchText
 	}
 	SetTimer, ShowScoresOrIntro, Off
 	return
 }
+
+tryQueueAgain:
+	if(AutoQueueMatches == "true") {
+		if(A_TickCount - matchStartTime > matchTimeDelay) {
+			QueueMatch()
+		}
+	}
+return
 
 QueueMatch() {
 	ControlGetText, MatchMode, Static4, %fieldControlNameIs% ;IQ=4, EDR=4, changed in a previous ver?
@@ -408,7 +421,7 @@ QueueMatch() {
 		return
 	}
 	QueuedMatch = 1
-	ControlClick, Button2, %fieldControlNameIs%,,,,NA ;queue next match button
+	ControlClick, %QueueNextMatchButton%, %fieldControlNameIs%,,,,NA ;queue next match button
 	Sleep, sleepDelay*2
 	ControlGetText, StaticOneText, Static1, %fieldControlNameIs%
 	if(inFinals == "true") {
@@ -421,24 +434,28 @@ QueueMatch() {
 	else
 	{
 		failedToQueueCount++
-		QueueMatch()
+		;QueueMatch()
+		;instead of just spamming 3x quickly, let's set a timer to try again in 2 seconds.
+		SetTimer, tryQueueAgain, 2000
 		return
 	}
+	;after we queue, cancel the try-again timer
+	SetTimer, tryQueueAgain, Off
 	ControlGetText, SavedMatchText, Static2, %fieldControlNameIs%
 	Sleep, sleepDelay*6
 	if(lastSavedMatchText == SavedMatchText) ;just go to intro if we don't have a new 'saved match results'
 	{
-		ControlClick, Button23, %fieldControlNameIs%,,,,NA ;intro
-		ControlClick, Button23, %fieldControlNameIs%,,,,NA
-		ControlClick, Button23, %fieldControlNameIs%,,,,NA
+		ControlClick, %IntroButton%, %fieldControlNameIs%,,,,NA ;intro
+		ControlClick, %IntroButton%, %fieldControlNameIs%,,,,NA
+		ControlClick, %IntroButton%, %fieldControlNameIs%,,,,NA
 		SetTimer, BackToIntro, Off
 	}
 	else
 	{
 		SetTimer, BackToIntro, 10000 ;back to intro after X seconds (from displaying scores)
-		ControlClick, Button25, %fieldControlNameIs%,,,,NA ;saved results
-		ControlClick, Button25, %fieldControlNameIs%,,,,NA ;saved results
-		ControlClick, Button25, %fieldControlNameIs%,,,,NA ;saved results
+		ControlClick, %SavedMatchResultsButton%, %fieldControlNameIs%,,,,NA ;saved results
+		ControlClick, %SavedMatchResultsButton%, %fieldControlNameIs%,,,,NA
+		ControlClick, %SavedMatchResultsButton%, %fieldControlNameIs%,,,,NA
 		lastSavedMatchText := SavedMatchText
 	}
 	failedToQueueCount := 0

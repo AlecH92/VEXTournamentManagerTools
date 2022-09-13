@@ -7,6 +7,9 @@ SetWorkingDir %A_ScriptDir%
 
 CoordMode, Mouse, Relative
 
+
+#Include VEX_Shared.ahk
+
 global fieldControlNameIs = "Match Field Set #1"
 
 ControlGetText, testForFieldControl, Button7, %fieldControlNameIs%
@@ -19,6 +22,8 @@ else if InStr(testForFieldControl, "Team") {
 else {
 	InputBox, fieldControlNameIs, % "Is your Field Control named differently? Please input it (Field Sets > first entry)"
 }
+
+UpdateButtonDefinitions()
 
 inFinals := "false"
 SetTimer, DisplayChange, 1000
@@ -37,12 +42,12 @@ Loop {
 }
 
 DisplayChange:
-	ControlGet, currentlyInMatch, Checked , , Button24, %fieldControlNameIs%
+	ControlGet, currentlyInMatch, Checked , , %InMatchButton%, %fieldControlNameIs%
 	if ErrorLevel
 	{
 		return ;we had an issue finding Field Control?? Don't do anything...
 	}
-	ControlGet, currentlyInIntro, Checked , , Button23, %fieldControlNameIs%
+	ControlGet, currentlyInIntro, Checked , , %IntroButton%, %fieldControlNameIs%
 	;ToolTip %currentlyInMatch% ;DEBUG
 	if(currentlyInMatch) { ;if In-Match is selected
 		SendMessage, 0x147, 0, 0, ComboBox1, %fieldControlNameIs%  ; 0x147 is CB_GETCURSEL (for a DropDownList or ComboBox).
