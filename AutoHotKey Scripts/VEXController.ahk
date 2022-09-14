@@ -26,7 +26,9 @@ global AutoQueueMatches = "true" ;if true, uncomment line below
 SetTimer, CheckQueue, 1000
 global AutoShowScores = "true" ;auto show scores determines if we should automatically display the last score/or intro on a timer. this is to allow a ref to start matches without us recording the start time.
 global notifiedScores = "false"
+global savedTimeStamp = "false" ;this is used for YouTube Chapters
 global RefScoreSetVar = "false" ;if true, uncomment line below
+global AutoObsChapters = "true" ;automatically grab obs live timestamps?
 ;SetTimer, RefScoreSet, 5000 ;Disabled, untested in latest TM versions
 global matchStartTime = A_TickCount
 global matchTimeDelay = 110000 ;IQ=65000, EDR=110000 Field Control Button 5 Text: "Red" = 110000, "Team 1" = 65000
@@ -317,6 +319,17 @@ RefScoreSetSwap:
 	SetMenu()
 return
 
+SwapObsAutoChapters:
+	if(AutoObsChapters == "true") {
+		AutoObsChapters := "false"
+	}
+	else
+	{
+		AutoObsChapters := "true"
+	}
+	SetMenu()
+return
+
 SetLastSavedMatch:
 return
 
@@ -327,6 +340,7 @@ SetMenu() {
 	Menu, TRAY, add, Auto Show Scores If-Ref: %AutoShowScores%, SwapAutoScores
 	Menu, TRAY, add, Auto Queue Matches: %AutoQueueMatches%, SwapAutoQueue
 	Menu, TRAY, add, Auto Save Ref Scores: %RefScoreSetVar%, RefScoreSetSwap
+	Menu, TRAY, add, Automatic OBS Chapters: %AutoObsChapters%, SwapObsAutoChapters
 	Menu, TRAY, add, In Finals: %inFinals%, SwapInFinals
 	Menu, TRAY, add, Debugging Active: %DebugActive%, SetDebugActive
 	Menu, TRAY, add, Match Length: %matchTimeDelay%, SetMatchTimeDelay
@@ -347,7 +361,15 @@ CheckQueue:
 	{
 		;ToolTip "Showing intro via CheckQueue..."
 		notifiedScores := "true"
+		savedTimeStamp := "false"
+		MsgBox doing show scores or intro in 5s
 		SetTimer, ShowScoresOrIntro, 5000 ;we are going to wait 5 seconds and then determine if we show scores or the intro screen
+	}
+	if(AutoObsChapters == true && (MatchMode == "DRIVER CONTROL" || MatchMode == "AUTONOMOUS") && savedTimeStamp == "false") {
+		;we've entered the actual match - let's save the current timestamp for YouTube Chapters
+		ObsSaveTimestamp()
+		savedTimeStamp := "true"
+		MsgBox saved obs timestamp
 	}
 	if(MatchMode == "DRIVER CONTROL" && AutoShowScores == "true" && notifiedScores == "true") {
 		notifiedScores := "false"

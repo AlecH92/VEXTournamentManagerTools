@@ -57,3 +57,13 @@ Loop
 }
 return
 }
+
+ObsSaveTimestamp() {
+	obsAcc := Acc_Get("Name", "4.14.4.4", 0, "", "obs64")
+	;MsgBox %obsAcc%
+	;This fetches the current "LIVE: 00:00:00" text from OBS. we should save this with the current Q# match number to a text file so we can create Chapters in the video description later.
+	ControlGetText, StaticOneText, Static1, %fieldControlNameIs%
+	TextToSave := obsAcc A_Tab "Match " StaticOneText "`n"
+	FileAppend, %TextToSave%, obs_auto_chapters.txt
+return
+}
