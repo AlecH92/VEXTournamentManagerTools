@@ -22,7 +22,7 @@ global DebugActive = "false"
 ;global DebugActive = "true"
 
 global inFinals = "false"
-global AutoQueueMatches = "true" ;if true, uncomment line below
+global AutoQueueMatches = "false" ;if true, uncomment line below
 SetTimer, CheckQueue, 1000
 global AutoShowScores = "true" ;auto show scores determines if we should automatically display the last score/or intro on a timer. this is to allow a ref to start matches without us recording the start time.
 global notifiedScores = "false"
@@ -362,14 +362,14 @@ CheckQueue:
 		;ToolTip "Showing intro via CheckQueue..."
 		notifiedScores := "true"
 		savedTimeStamp := "false"
-		MsgBox doing show scores or intro in 5s
+		;MsgBox doing show scores or intro in 5s
 		SetTimer, ShowScoresOrIntro, 5000 ;we are going to wait 5 seconds and then determine if we show scores or the intro screen
 	}
 	if(AutoObsChapters == true && (MatchMode == "DRIVER CONTROL" || MatchMode == "AUTONOMOUS") && savedTimeStamp == "false") {
 		;we've entered the actual match - let's save the current timestamp for YouTube Chapters
 		ObsSaveTimestamp()
 		savedTimeStamp := "true"
-		MsgBox saved obs timestamp
+		;MsgBox saved obs timestamp
 	}
 	if(MatchMode == "DRIVER CONTROL" && AutoShowScores == "true" && notifiedScores == "true") {
 		notifiedScores := "false"
@@ -398,8 +398,32 @@ ShowScoresOrIntro() {
 		SetTimer, ShowScoresOrIntro, Off
 		return
 	}
+	ControlGetText, StaticOneText, Static1, %fieldControlNameIs%
+	if(StaticOneText == "SF 1-1") {
+		ControlClick, %IntroButton%, %fieldControlNameIs%,,,,NA ;intro
+		ControlClick, %IntroButton%, %fieldControlNameIs%,,,,NA
+		ControlClick, %IntroButton%, %fieldControlNameIs%,,,,NA
+		SetTimer, BackToIntro, Off
+		SetTimer, ShowScoresOrIntro, Off
+		return
+	}
+	if( StaticOneText == "F 1" || StaticOneText == "F 2" ) {
+		;we're in finals, don't show scores/intro etc. bail.
+		SetTimer, ShowScoresOrIntro, Off
+		return
+	}
 	ControlGetText, SavedMatchText, Static2, %fieldControlNameIs%
 	Sleep, sleepDelay*6
+	if( (InStr(StaticOneText,"R16") || InStr(StaticOneText,"QF")) && RegExMatch(SavedMatchText,"Q\d") ) {
+		;we just started R16, QF etc so don't show old scores from qual matches
+		;MsgBox Got R16 or QF and old Q# score
+		ControlClick, %IntroButton%, %fieldControlNameIs%,,,,NA ;intro
+		ControlClick, %IntroButton%, %fieldControlNameIs%,,,,NA
+		ControlClick, %IntroButton%, %fieldControlNameIs%,,,,NA
+		SetTimer, BackToIntro, Off
+		SetTimer, ShowScoresOrIntro, Off
+		return
+	}
 	if(lastSavedMatchText == SavedMatchText) ;just go to intro if we don't have a new 'saved match results'
 	{
 		ControlClick, %IntroButton%, %fieldControlNameIs%,,,,NA ;intro
