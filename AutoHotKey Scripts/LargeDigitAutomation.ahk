@@ -16,8 +16,11 @@ WriteLog(text) {
 global fieldControlNameIs = "Match Field Set #1"
 
 global fieldOneAddr = "http://192.168.1.181/post"
-global fieldTwoAddr = "http://192.168.1.46/post"
-global fieldThreeAddr = "http://192.168.1.145/post"
+global fieldTwoAddr = "http://192.168.1.145/post"
+global fieldThreeAddr = "http://192.168.1.59/post"
+IniRead, fieldOneAddr, lda.ini, Setup, fieldOneAddr, "http://192.168.1.181/post"
+IniRead, fieldTwoAddr, lda.ini, Setup, fieldTwoAddr, "http://192.168.1.145/post"
+IniRead, fieldThreeAddr, lda.ini, Setup, fieldThreeAddr, "http://192.168.1.59/post"
 
 WriteLog("Field1:" + fieldOneAddr)
 WriteLog("Field2:" + fieldTwoAddr)
@@ -211,14 +214,13 @@ SendDataToBoard(data, endpoint)
 	hObject.send(rData) ; send request with data
 }
 
-UpdateFieldOne(strinput, fromStr)
+UpdateFieldOne(data, fromStr)
 {
 	endpoint:=fieldOneAddr ; url pointing to the API endpoint
-	data:={"number":strinput} ; key-val data to be posted
 	try
 	{
 		SendDataToBoard(data, endpoint)
-		WriteLog("Updated F1 from " fromStr " to " currentMatchStr)
+		WriteLog("Updated F1 from " fromStr " to " data["number"])
 	}
 	catch e
 	{
@@ -229,14 +231,13 @@ UpdateFieldOne(strinput, fromStr)
 	}
 }
 
-UpdateFieldTwo(strinput, fromStr)
+UpdateFieldTwo(data, fromStr)
 {
 	endpoint:=fieldTwoAddr ; url pointing to the API endpoint
-	data:={"number":strinput} ; key-val data to be posted
 	try
 	{
 		SendDataToBoard(data, endpoint)
-		WriteLog("Updated F2 from " fromStr " to " currentMatchStr)
+		WriteLog("Updated F2 from " fromStr " to " data["number"])
 	}
 	catch e
 	{
@@ -247,14 +248,13 @@ UpdateFieldTwo(strinput, fromStr)
 	}
 }
 
-UpdateFieldThree(strinput, fromStr)
+UpdateFieldThree(data, fromStr)
 {
 	endpoint:=fieldThreeAddr ; url pointing to the API endpoint
-	data:={"number":strinput} ; key-val data to be posted
 	try
 	{
 		SendDataToBoard(data, endpoint)
-		WriteLog("Updated F3 from " fromStr " to " currentMatchStr)
+		WriteLog("Updated F3 from " fromStr " to " data["number"])
 	}
 	catch e
 	{
