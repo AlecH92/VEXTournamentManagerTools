@@ -13,6 +13,14 @@ WriteLog(text) {
 	FileAppend, % A_NowUTC ": " text "`n", logfile.txt ; can provide a full path to write to another directory
 }
 
+Menu, TRAY, nostandard
+Menu, TRAY, deleteall
+Menu, TRAY, add, Manual Update Field 1, ManualFieldOne
+Menu, TRAY, add, Manual Update Field 2, ManualFieldTwo
+Menu, TRAY, add, Manual Update Field 3, ManualFieldThree
+Menu, TRAY, add
+Menu, TRAY, add, Exit, Exit
+
 global fieldControlNameIs = "Match Field Set #1"
 
 global fieldOneAddr = "http://192.168.1.181/post"
@@ -75,8 +83,19 @@ DisplayChange:
 		data:={"number":"2"} ; key-val data to be posted
 		UpdateFieldTwo(data, "Practice")
 		
-		data:={"number":"3"} ; key-val data to be posted
-		UpdateFieldThree(data, "Practice")
+		SendMessage, 0x147, 0, 0, ComboBox1, %fieldControlNameIs%  ; 0x147 is CB_GETCURSEL (for a DropDownList or ComboBox).
+		ChoicePos = %ErrorLevel%  ; It will be -1 if there is no item selected.
+		ChoicePos += 1  ; Convert from 0-based to 1-based, i.e. so that the first item is known as 1, not 0.
+		if(NumFields == 3) ;only update field 3 if we have 3 fields
+		{
+			data:={"number":"3"} ; key-val data to be posted
+			UpdateFieldThree(data, "Practice")
+		}
+		else
+		{
+			data:={"number":"1"} ; key-val data to be posted
+			UpdateFieldThree(data, "Practice")
+		}
 		return
 	}
 	if(SubStr(StaticOneText, 1, 1) != "Q")
@@ -119,6 +138,7 @@ DisplayChange:
 				currentMatchStr := "" + currentMatch
 				data:={"number":currentMatchStr} ; key-val data to be posted
 				UpdateFieldOne(data, "CP2-2")
+				UpdateFieldThree(data, "CP2-2") ;if we only have two fields, use field three as a pseudo-field-one. we are possibly using this for events where pits may be in another room.
 			}
 		}
 	}
@@ -208,8 +228,7 @@ SendDataToBoard(data, endpoint)
 {
 	createFormData(rData,rHeader,data) ; formats the data, stores in rData, header info in rHeader
 	hObject:=comObjCreate("MSXML2.XMLHTTP.6.0")
-	hObject.timeout :=2000 ; 2 second timeout
-	hObject.open("POST",endpoint)
+	hObject.open("POST", endpoint, true)
 	hObject.setRequestHeader("Content-Type",rHeader) ; set content header
 	hObject.send(rData) ; send request with data
 }
@@ -264,3 +283,25 @@ UpdateFieldThree(data, fromStr)
 		lastFieldThree := "" + "err"
 	}
 }
+
+ManualFieldOne:
+	InputBox, userInput, Enter number to send to field one
+	data:={"number":userInput}
+	UpdateFieldOne(data, "Manual-F1")
+return
+
+ManualFieldTwo:
+	InputBox, userInput, Enter number to send to field two
+	data:={"number":userInput}
+	UpdateFieldTwo(data, "Manual-F2")
+return
+
+ManualFieldThree:
+	InputBox, userInput, Enter number to send to field three
+	data:={"number":userInput}
+	UpdateFieldThree(data, "Manual-F3")
+return
+
+Exit:
+	ExitApp
+return
