@@ -363,7 +363,9 @@ CheckQueue:
 		notifiedScores := "true"
 		savedTimeStamp := "false"
 		;MsgBox doing show scores or intro in 5s
+		Control, Uncheck,, %PlaySoundsCheckbox%, %fieldControlNameIs% ;reset our Play Sounds checkbox
 		SetTimer, ShowScoresOrIntro, 5000 ;we are going to wait 5 seconds and then determine if we show scores or the intro screen
+		SetTimer, ToggleOnPlaySounds, 30000 ;we use Play Sounds checkbox to alert DisplayControl it should switch to the match view.
 	}
 	if(AutoObsChapters == true && (MatchMode == "DRIVER CONTROL" || MatchMode == "AUTONOMOUS") && savedTimeStamp == "false") {
 		;we've entered the actual match - let's save the current timestamp for YouTube Chapters
@@ -440,6 +442,23 @@ ShowScoresOrIntro() {
 		lastSavedMatchText := SavedMatchText
 	}
 	SetTimer, ShowScoresOrIntro, Off
+	return
+}
+
+ToggleOnPlaySounds() {
+	;if we aren't IN MATCH, toggle on the Play Sounds checkbox
+	ControlGetText, MatchMode, Static4, %fieldControlNameIs% ;IQ=4, EDR=4, changed in a previous ver?
+	if ErrorLevel
+	{
+		return ;we had an issue finding Field Control?? Don't do anything...
+	}
+	if(MatchMode != "")
+	{
+		SetTimer, ToggleOnPlaySounds, Off
+		return
+	}
+	Control, Check,, %PlaySoundsCheckbox%, %fieldControlNameIs%
+	SetTimer, ToggleOnPlaySounds, Off
 	return
 }
 

@@ -7,6 +7,7 @@ global AutonWinnerRedButton
 global AutonWinnerBlueButton
 global AutonWinnerNoneButton
 global AutonWinnerTieButton
+global PlaySoundsCheckbox
 global StartMatchActualButtonIndex = -1
 
 UpdateButtonDefinitions() {
@@ -53,6 +54,10 @@ Loop
 	if (btntext == "Tie")
 	{
 		AutonWinnerTieButton := "Button"A_Index
+	}
+	if (btntext == "Play Sounds")
+	{
+		PlaySoundsCheckbox := "Button"A_Index
 	}
 }
 return

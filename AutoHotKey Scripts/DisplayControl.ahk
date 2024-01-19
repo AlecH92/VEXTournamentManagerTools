@@ -100,8 +100,9 @@ DisplayChange:
 		return ;we had an issue finding Field Control?? Don't do anything...
 	}
 	ControlGet, currentlyInIntro, Checked , , %IntroButton%, %fieldControlNameIs%
+	ControlGet, playSoundsEnabled, Checked , , %PlaySoundsCheckbox%, %fieldControlNameIs%
 	;ToolTip %currentlyInMatch% ;DEBUG
-	if(currentlyInMatch) { ;if In-Match is selected
+	if(currentlyInMatch || playSoundsEnabled) { ;if In-Match is selected
 		SendMessage, 0x147, 0, 0, ComboBox1, %fieldControlNameIs%  ; 0x147 is CB_GETCURSEL (for a DropDownList or ComboBox).
 		ChoicePos = %ErrorLevel%  ; It will be -1 if there is no item selected.
 		ChoicePos += 1  ; Convert from 0-based to 1-based, i.e. so that the first item is known as 1, not 0.
