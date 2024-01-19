@@ -226,8 +226,11 @@ return
 
 SendDataToBoard(data, endpoint)
 {
+	WriteLog("Sending " data["number"] " to " endpoint)
 	createFormData(rData,rHeader,data) ; formats the data, stores in rData, header info in rHeader
-	hObject:=comObjCreate("MSXML2.XMLHTTP.6.0")
+	;hObject:=comObjCreate("WinHttp.WinHttpRequest.5.1")
+	hObject:=comObjCreate("MSXML2.ServerXMLHTTP.6.0")
+	;hObject:=comObjCreate("MSXML2.XMLHTTP")
 	hObject.open("POST", endpoint, true)
 	hObject.setRequestHeader("Content-Type",rHeader) ; set content header
 	hObject.send(rData) ; send request with data
