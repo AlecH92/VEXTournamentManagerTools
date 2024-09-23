@@ -23,7 +23,7 @@ Loop
 		StartMatchButton := "Button"A_Index
 		StartMatchActualButtonIndex := A_Index
 	}
-	if (btntext == "Intro")
+	if (btntext == "Up Next")
 	{
 		IntroButton := "Button"A_Index
 	}
