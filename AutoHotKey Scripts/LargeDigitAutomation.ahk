@@ -18,6 +18,7 @@ Menu, TRAY, deleteall
 Menu, TRAY, add, Manual Update Field 1, ManualFieldOne
 Menu, TRAY, add, Manual Update Field 2, ManualFieldTwo
 Menu, TRAY, add, Manual Update Field 3, ManualFieldThree
+Menu, TRAY, add, Set Last Match, SetLastMatch
 Menu, TRAY, add
 Menu, TRAY, add, Exit, Exit
 
@@ -37,6 +38,7 @@ WriteLog("Field3:" + fieldThreeAddr)
 global lastFieldOne = 0
 global lastFieldTwo = 0
 global lastFieldThree = 0
+global actualLastMatch = 0
 
 ControlGetText, testForFieldControl, Button7, %fieldControlNameIs%
 if (InStr(testForFieldControl, "Red") or InStr(testForFieldControl, "Blue")) {
@@ -74,6 +76,7 @@ DisplayChange:
 	ControlGetText, StaticOneText, Static1, %fieldControlNameIs%
 	;StaticOneText == "Q1"; "Q44" etc.
 	;MsgBox %StaticOneText%
+	ControlGetText, MatchMode, Static4, %fieldControlNameIs% ;IQ=4, EDR=4, changed in a previous ver?
 	if(SubStr(StaticOneText, 1, 1) == "P")
 	{
 		WriteLog("Found Practice - setting 1,2,3 " + StaticOneText)
@@ -105,6 +108,7 @@ DisplayChange:
 		return
 	}
 	currentMatchStr := SubStr(StaticOneText, 2)
+	currentMatchStrOrig := SubStr(StaticOneText, 2)
 	;MsgBox %currentMatchStr%
 	currentMatch := (currentMatchStr * 1) + 1
 
@@ -115,105 +119,155 @@ DisplayChange:
 	{
 		;WriteLog("Two fields...")
 		;MsgBox % "We've got two fields!"
-		if(ChoicePos == "1") {
-
-			;FIELD 2
-			currentMatch := (currentMatchStr * 1) + 1
-			if(lastFieldTwo != currentMatch)
+		if(ChoicePos == "1")
+		{
+			if(MatchMode != "")
 			{
-				lastFieldTwo := currentMatch
+				;match mode is not blank, the match has started. update field 1 to the "next-next" match.
+				;FIELD 1
+				currentMatch := (currentMatchStrOrig * 1) + 2
 				currentMatchStr := "" + currentMatch
 				data:={"number":currentMatchStr} ; key-val data to be posted
-				UpdateFieldTwo(data, "CP2-1")
+				UpdateFieldOne(data, "L127")
 			}
+			else
+			{
+				;FIELD 1
+				currentMatchStr := "" + currentMatchStrOrig
+				data:={"number":currentMatchStr} ; key-val data to be posted
+				UpdateFieldOne(data, "CP3-3")
+			}
+			;FIELD 2
+			currentMatch := (currentMatchStrOrig * 1) + 1
+			lastFieldTwo := currentMatch
+			currentMatchStr := "" + currentMatch
+			data:={"number":currentMatchStr} ; key-val data to be posted
+			UpdateFieldTwo(data, "L134")
 			
 		}
-		else if(ChoicePos == "2") {
-
-			;FIELD 1
-			currentMatch := (currentMatchStr * 1) + 1
-			if(lastFieldOne != currentMatch)
+		else if(ChoicePos == "2")
+		{
+			if(MatchMode != "")
 			{
-				lastFieldOne := currentMatch
+				;match mode is not blank, the match has started. update field 2 to the "next-next" match.
+				;FIELD 2
+				currentMatch := (currentMatchStrOrig * 1) + 2
 				currentMatchStr := "" + currentMatch
 				data:={"number":currentMatchStr} ; key-val data to be posted
-				UpdateFieldOne(data, "CP2-2")
-				UpdateFieldThree(data, "CP2-2") ;if we only have two fields, use field three as a pseudo-field-one. we are possibly using this for events where pits may be in another room.
+				UpdateFieldTwo(data, "L147")
 			}
+			else
+			{
+				;FIELD 2
+				currentMatchStr := "" + currentMatchStrOrig
+				data:={"number":currentMatchStr} ; key-val data to be posted
+				UpdateFieldTwo(data, "L179")
+			}
+			;FIELD 1
+			currentMatch := (currentMatchStrOrig * 1) + 1
+			currentMatchStr := "" + currentMatch
+			data:={"number":currentMatchStr} ; key-val data to be posted
+			UpdateFieldOne(data, "L154")
+			UpdateFieldThree(data, "L155") ;if we only have two fields, use field three as a pseudo-field-one. we are possibly using this for events where pits may be in another room.
 		}
 	}
 	else if(NumFields == 3)
 	{
 		;WriteLog("Three fields...")
 		;MsgBox % "We've got three fields!"
-		if(ChoicePos == "1") {
+		if(ChoicePos == "1")
+		{
 			;WriteLog("From field 1")
 			;we're on field 1 - we should send data to field 2 and field 3
 
-			;FIELD 2
-			currentMatchStr := "" + currentMatch
-			if(lastFieldTwo != currentMatch)
+			if(MatchMode != "")
 			{
-				lastFieldTwo := currentMatch
+				;match mode is not blank, the match has started. update field 1 to the "next-next-next" match.
+				;FIELD 1
+				currentMatch := (currentMatchStrOrig * 1) + 3
 				currentMatchStr := "" + currentMatch
 				data:={"number":currentMatchStr} ; key-val data to be posted
-				UpdateFieldTwo(data, "CP3-1")
+				UpdateFieldOne(data, "L173")
 			}
-			
-			;FIELD 3
-			currentMatch := (currentMatchStr * 1) + 1
-			if(lastFieldThree != currentMatch)
+			else
 			{
-				lastFieldThree := currentMatch
-				currentMatchStr := "" + currentMatch
-				data:={"number":currentMatchStr} ; key-val data to be posted
-				UpdateFieldThree(data, "CP3-1")
-			}
-		}
-		else if(ChoicePos == "2") {
-			;we're on field 2 - we should send data to field 3 and field 1
-			;WriteLog("From field 2")
-			;FIELD 3
-			currentMatchStr := "" + currentMatch
-			if(lastFieldThree != currentMatch)
-			{
-				lastFieldThree := currentMatch
-				currentMatchStr := "" + currentMatch
-				data:={"number":currentMatchStr} ; key-val data to be posted
-				UpdateFieldThree(data, "CP3-2")
-			}
-			
-			;FIELD 1
-			currentMatch := (currentMatchStr * 1) + 1
-			if(lastFieldOne != currentMatch)
-			{
-				lastFieldOne := currentMatch
-				currentMatchStr := "" + currentMatch
-				data:={"number":currentMatchStr} ; key-val data to be posted
-				UpdateFieldOne(data, "CP3-2")
-			}
-		}
-		else {
-			;we're on field 3 - we should send data to field 1 and field 2
-			;WriteLog("From field 3")
-			;FIELD 1
-			currentMatchStr := "" + currentMatch
-			if(lastFieldOne != currentMatch)
-			{
-				lastFieldOne := currentMatch
+				;FIELD 1
+				currentMatchStr := "" + currentMatchStrOrig
 				data:={"number":currentMatchStr} ; key-val data to be posted
 				UpdateFieldOne(data, "CP3-3")
 			}
-			
 			;FIELD 2
-			currentMatch := (currentMatchStr * 1) + 1
-			if(lastFieldTwo != currentMatch)
+			currentMatchStr := "" + currentMatchStrOrig
+			data:={"number":currentMatchStr} ; key-val data to be posted
+			UpdateFieldTwo(data, "L179")
+			
+			;FIELD 3
+			currentMatch := (currentMatchStrOrig * 1) + 1
+			currentMatchStr := "" + currentMatch
+			data:={"number":currentMatchStr} ; key-val data to be posted
+			UpdateFieldThree(data, "L186")
+		}
+		else if(ChoicePos == "2")
+		{
+			;we're on field 2 - we should send data to field 3 and field 1
+			;WriteLog("From field 2")
+			if(MatchMode != "")
 			{
-				lastFieldTwo := currentMatch
+				;match mode is not blank, the match has started. update field 2 to the "next-next-next" match.
+				;FIELD 2
+				currentMatch := (currentMatchStrOrig * 1) + 3
 				currentMatchStr := "" + currentMatch
 				data:={"number":currentMatchStr} ; key-val data to be posted
-				UpdateFieldTwo(data, "CP3-3")
+				UpdateFieldTwo(data, "L198")
 			}
+			else
+			{
+				;FIELD 2
+				currentMatchStr := "" + currentMatchStrOrig
+				data:={"number":currentMatchStr} ; key-val data to be posted
+				UpdateFieldTwo(data, "L179")
+			}
+			;FIELD 3
+			currentMatchStr := "" + currentMatchStrOrig
+			data:={"number":currentMatchStr} ; key-val data to be posted
+			UpdateFieldThree(data, "L204")
+			
+			;FIELD 1
+			currentMatch := (currentMatchStrOrig * 1) + 1
+			currentMatchStr := "" + currentMatch
+			data:={"number":currentMatchStr} ; key-val data to be posted
+			UpdateFieldOne(data, "L210")
+		}
+		else
+		{
+			;we're on field 3 - we should send data to field 1 and field 2
+			;WriteLog("From field 3")
+			if(MatchMode != "")
+			{
+				;match mode is not blank, the match has started. update field 3 to the "next-next" match.
+				;FIELD 3
+				currentMatch := (currentMatchStrOrig * 1) + 3
+				currentMatchStr := "" + currentMatch
+				data:={"number":currentMatchStr} ; key-val data to be posted
+				UpdateFieldTwo(data, "L222")
+			}
+			else
+			{
+				;FIELD 3
+				currentMatchStr := "" + currentMatchStrOrig
+				data:={"number":currentMatchStr} ; key-val data to be posted
+				UpdateFieldThree(data, "L204")
+			}
+			;FIELD 1
+			currentMatchStr := "" + currentMatchStrOrig
+			data:={"number":currentMatchStr} ; key-val data to be posted
+			UpdateFieldOne(data, "CP3-3")
+			
+			;FIELD 2
+			currentMatch := (currentMatchStrOrig * 1) + 1
+			currentMatchStr := "" + currentMatch
+			data:={"number":currentMatchStr} ; key-val data to be posted
+			UpdateFieldTwo(data, "CP3-3")
 		}
 	}
 
@@ -229,8 +283,8 @@ SendDataToBoard(data, endpoint)
 	WriteLog("Sending " data["number"] " to " endpoint)
 	createFormData(rData,rHeader,data) ; formats the data, stores in rData, header info in rHeader
 	;hObject:=comObjCreate("WinHttp.WinHttpRequest.5.1")
-	hObject:=comObjCreate("MSXML2.ServerXMLHTTP.6.0")
-	;hObject:=comObjCreate("MSXML2.XMLHTTP")
+	;hObject:=comObjCreate("MSXML2.ServerXMLHTTP.6.0")
+	hObject:=comObjCreate("MSXML2.XMLHTTP")
 	hObject.open("POST", endpoint, true)
 	hObject.setRequestHeader("Content-Type",rHeader) ; set content header
 	hObject.send(rData) ; send request with data
@@ -239,6 +293,13 @@ SendDataToBoard(data, endpoint)
 UpdateFieldOne(data, fromStr)
 {
 	endpoint:=fieldOneAddr ; url pointing to the API endpoint
+	if(data["number"] > actualLastMatch)
+	{
+		data["number"] := (0 * 1) + 0
+		SendDataToBoard(data, endpoint)
+		WriteLog("Not updating F1 from " fromStr " to " data["number"] " because it is past the final match number " actualLastMatch)
+		return
+	}
 	try
 	{
 		SendDataToBoard(data, endpoint)
@@ -256,6 +317,13 @@ UpdateFieldOne(data, fromStr)
 UpdateFieldTwo(data, fromStr)
 {
 	endpoint:=fieldTwoAddr ; url pointing to the API endpoint
+	if(data["number"] > actualLastMatch)
+	{
+		data["number"] := (0 * 1) + 0
+		SendDataToBoard(data, endpoint)
+		WriteLog("Not updating F2 from " fromStr " to " data["number"] " because it is past the final match number " actualLastMatch)
+		return
+	}
 	try
 	{
 		SendDataToBoard(data, endpoint)
@@ -273,6 +341,13 @@ UpdateFieldTwo(data, fromStr)
 UpdateFieldThree(data, fromStr)
 {
 	endpoint:=fieldThreeAddr ; url pointing to the API endpoint
+	if(data["number"] > actualLastMatch)
+	{
+		data["number"] := (0 * 1) + 0
+		SendDataToBoard(data, endpoint)
+		WriteLog("Not updating F3 from " fromStr " to " data["number"] " because it is past the final match number " actualLastMatch)
+		return
+	}
 	try
 	{
 		SendDataToBoard(data, endpoint)
@@ -303,6 +378,11 @@ ManualFieldThree:
 	InputBox, userInput, Enter number to send to field three
 	data:={"number":userInput}
 	UpdateFieldThree(data, "Manual-F3")
+return
+
+SetLastMatch:
+	InputBox, userInput, Enter the Q## of the last match
+	actualLastMatch := (userInput * 1) + 0
 return
 
 Exit:
