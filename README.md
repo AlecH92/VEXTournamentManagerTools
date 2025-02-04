@@ -4,6 +4,8 @@
 * The OBS folder contains setup and usage info, to be used with DisplayControl
 * The VEXController script can be utilized with a generic USB joystick (Xbox/PS4 controller etc)
 
+Questions? Reach me at: alecharley at hilltoprobotics dot com
+
 ### Below is information on the AutoHotKey scripts
 
 ## VEXController
