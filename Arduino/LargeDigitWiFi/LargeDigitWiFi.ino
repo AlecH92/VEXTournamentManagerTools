@@ -133,9 +133,22 @@ for(int i=0;i<args;i++){
 }
 
 int number = 0;
+int status = WL_IDLE_STATUS;
 
 void loop()
 {
+	if (WiFi.status() != WL_CONNECTED)
+	{
+		//we lost connection, try to reconnect?
+		while (status != WL_CONNECTED)
+		{
+			// Connect to WPA/WPA2 network. Change this line if using open or WEP network:
+			status = WiFi.begin(ssid, pass);
+			// wait 10 seconds for connection:
+			delay(10000);
+		}
+	}
+	
   //server.handleClient();
   /*showNumber(number); //Test pattern
   number++;
