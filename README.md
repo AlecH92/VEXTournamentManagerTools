@@ -36,6 +36,7 @@ Questions? Reach me at: alecharley at hilltoprobotics dot com
   Loops once per second checking for the `Field Control` window options: "Intro" or "In-Match"
   ```
   If it's in Intro, the Combined view (F7 shortcut) is shown
+  	Note that if Play Sounds is checked, rather than Combined it will select the In-Match appropriate view
   If it's in Intro and In Finals (F3 shortcut) is toggled on, the Combined Finals view (F8 shortcut) is shown
   If it's In-Match, the "Field" dropdown is checked. The first option uses F9 and any other option uses F10
   If it's neither of these, it switches to a normal Audience Display (F6 shortcut)
